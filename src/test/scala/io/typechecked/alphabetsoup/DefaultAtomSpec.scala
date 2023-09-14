@@ -5,29 +5,26 @@ import org.scalatest.matchers.should.Matchers
 
 class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
-  it should "not atom select when no default is supplied" in {
+  it should "not atom select when no default is supplied" in:
     case class A(a: Int)
     illTyped("AtomSelector[A, String].apply(A(7))")
-  }
 
-  it should "atom select when a default is supplied" in {
+  it should "atom select when a default is supplied" in:
     case class A(a: Int)
 
     implicit val default: Atom.DefaultAtom[String] = Atom.DefaultAtom("default")
 
     AtomSelector[A, String].apply(A(7)) shouldBe "default"
 
-  }
 
-  it should "not select when a default of wrong type is supplied" in {
+  it should "not select when a default of wrong type is supplied" in:
     case class A(a: Int)
 
     implicit val default: Atom.DefaultAtom[Int] = Atom.DefaultAtom(5)
 
     illTyped("AtomSelector[A, String].apply(A(7))")
-  }
   
-  it should "atom select when a default is supplied for a complex type" in {
+  it should "atom select when a default is supplied for a complex type" in:
 
     case class A(a: Int)
 
@@ -38,9 +35,8 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
     AtomSelector[A, Complex].apply(A(7)) shouldBe complex
 
-  }
 
-  it should "always find DefaultAtom[EmptyTuple] and DefaultAtom[Unit]" in {
+  it should "always find DefaultAtom[EmptyTuple] and DefaultAtom[Unit]" in:
 
     case class A(i: Int)
 
@@ -50,30 +46,25 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
     illTyped("AtomSelector[A, (EmptyTuple, Unit)].apply(A(7))")
 
-  }
 
-  it should "not find a tuple of (EmptyTuple, Unit)" in {
+  it should "not find a tuple of (EmptyTuple, Unit)" in:
     case class A(i: Int)
 
     illTyped("AtomSelector[A, (EmptyTuple, Unit)].apply(A(7))")
 
-  } 
 
-  it should "accept DefaultAtom as an Atom" in {
+  it should "accept DefaultAtom as an Atom" in:
     trait A
     illTyped("implicitly[Atom[A]]")
-    val _ = {
+    val _ =
       implicit val default: Atom.DefaultAtom[A] = Atom.DefaultAtom[A](new A{})
       "implicitly[Atom[A]]" should compile
-    }
-  }
 
-  it should "be able to create default atom if a molecule exists" in {
+  it should "be able to create default atom if a molecule exists" in:
     "implicitly[Molecule[List, String]]" should compile
     "val a: Atom.DefaultAtom[List[String]] = Atom.DefaultAtom(List.empty[String])" should compile
-  }
 
-  "Mixer" should "work with a supplied default" in {
+  "Mixer" should "work with a supplied default" in:
     case class Source(a: Int)
     case class Target(a: Int, b: String)
 
@@ -85,8 +76,7 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
     mixer.mix(source) shouldBe Target(1, "default")
 
-  }
-  it should "return types from left ignoring default" in {
+  it should "return types from left ignoring default" in:
 
     case class Source(a: String)
     case class Target(a: String)
@@ -96,8 +86,7 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
     val mixer = Mixer[Source, Target]
 
     mixer.mix(Source("source")) shouldBe Target("source")
-  }
-  it should "work with multiple supplied defaults" in {
+  it should "work with multiple supplied defaults" in:
 
     case class Source(a: Int)
     case class Target(a: Int, b: String, c: Boolean, d: Long)
@@ -112,17 +101,15 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
     mixer.mix(source) shouldBe Target(1, "default", true, 10L)
 
-  }
-  it should "not work with molecules containing no internal structure" in {
+  it should "not work with molecules containing no internal structure" in:
     case class Source(a: Int)
     case class Target(a: Int, b: List[String], c: Unit)
 
     implicit val default: Atom.DefaultAtom[String] = Atom.DefaultAtom("default")
 
     illTyped("Mixer[Source, Target]")
-  }
 
-  it should "work with molecules" in {
+  it should "work with molecules" in:
     case class Source(a: Int, b: List[Tuple1[Long]])
     case class Target(a: Int, b: List[(Long,String)])
 
@@ -131,9 +118,8 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
     val mixer = Mixer[Source, Target]
 
     mixer.mix(Source(1, List(Tuple1(10L)))) shouldBe Target(1, List((10L,"default")))
-  }
 
-  it should "ignore default when atom exists" in {
+  it should "ignore default when atom exists" in:
     case class Source(a: String)
     case class Target(a: String)
 
@@ -142,9 +128,8 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
     val mixer = Mixer[Source, Target]
 
     mixer.mix(Source("Choose me!")) shouldBe Target("Choose me!")
-  }
 
-  it should "work when it finds a EmptyTuple before traversing entire structure" in {
+  it should "work when it finds a EmptyTuple before traversing entire structure" in:
 
     case class Source(a : Int)
 
@@ -152,16 +137,14 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
 
     AtomSelector[(Int *: EmptyTuple) *: (String *: EmptyTuple) *: EmptyTuple, String].apply((1 *: EmptyTuple) *: ("Me!" *: EmptyTuple) *: EmptyTuple) shouldBe "Me!"
 
-  }
 
-  it should "always work with EmptyTuple in this particular position" in {
+  it should "always work with EmptyTuple in this particular position" in:
 
     implicit val default: Atom.DefaultAtom[String] = Atom.DefaultAtom("default")
 
     AtomSelector[Int *: (String *: EmptyTuple) *: EmptyTuple, String].apply(1 *: ("Me!" *: EmptyTuple) *: EmptyTuple) shouldBe "Me!"
-  }
 
-  "MixerBuilder" should "take precedence over supplied defaults" in {
+  "MixerBuilder" should "take precedence over supplied defaults" in:
     case class Source(a: Int)
     case class Target(a: Int, b: String)
 
@@ -172,9 +155,8 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
     mixer.mix(Source(1)) shouldBe Target(1, "I AM THE REAL DEFAULT")
 
 
-  }
 
-  it should "work in conjunction with DefaultAtom" in {
+  it should "work in conjunction with DefaultAtom" in:
     case class Source(a: Int)
     case class Target(a: Int, b: String, c: Long)
 
@@ -183,6 +165,5 @@ class DefaultAtomSpec extends AnyFlatSpec with Matchers {
     val mixer = Mixer.from[Source].to[Target].withDefault(69L).build
 
     mixer.mix(Source(1)) shouldBe Target(1, "Default Brah", 69L)
-  }
 
 }

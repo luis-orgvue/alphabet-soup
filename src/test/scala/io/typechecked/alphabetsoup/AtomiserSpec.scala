@@ -3,21 +3,19 @@ package io.typechecked.alphabetsoup
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class AtomiserSpec extends AnyFlatSpec with Matchers {
+class AtomiserSpec extends AnyFlatSpec with Matchers:
 
-  "Atomiser" should "work on Unit" in {
+  "Atomiser" should "work on Unit" in:
     val g = Atomiser[Unit]
     (g.to(()): Unit) shouldBe (())
     (g.from(()): Unit) shouldBe (())
-  }
 
-  it should "work on EmptyTuple" in {
+  it should "work on EmptyTuple" in:
     val g = Atomiser[EmptyTuple]
     (g.to(EmptyTuple): EmptyTuple) shouldBe EmptyTuple
     (g.from(EmptyTuple): EmptyTuple) shouldBe EmptyTuple
-  }
 
-  it should "work on simple hlists" in {
+  it should "work on simple hlists" in:
     type H = Int *: String *: Boolean *: EmptyTuple
     val hlist: H = 5 *: "hello" *: true *: EmptyTuple
 
@@ -25,17 +23,15 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
     val gen = Atomiser[H]
     (gen.to(hlist): H) shouldBe hlist
     (gen.from(hlist): H) shouldBe hlist
-  }
 
-  it should "work on complex hlists" in {
+  it should "work on complex hlists" in:
     type H = Int *: (String *: Boolean *: EmptyTuple) *: (Float *: Double *: EmptyTuple) *: Boolean *: EmptyTuple
     val hlist: H = 5 *: ("hello" *: true *: EmptyTuple) *: (3.4f *: 3.9 *: EmptyTuple) *: true *: EmptyTuple
     val gen = Atomiser[H]
     (gen.to(hlist): H) shouldBe hlist
     (gen.from(hlist): H) shouldBe hlist
-  }
 
-  it should "work with small tuples" in {
+  it should "work with small tuples" in:
     type T = (String, Boolean)
     type H = String *: Boolean *: EmptyTuple
     val gen = Atomiser[T]
@@ -44,9 +40,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(tuple): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe tuple
-  }
 
-  it should "work with a larger flat tuple" in {
+  it should "work with a larger flat tuple" in:
     type T = (Int, String, Boolean)
     type H = Int *: String *: Boolean *: EmptyTuple
     val gen = Atomiser[T]
@@ -55,9 +50,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(tuple): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe tuple
-  }
 
-  it should "work on flat case classes" in {
+  it should "work on flat case classes" in:
     case class C(i: Int, s: String, b: Boolean)
     type H = Int *: String *: Boolean *: EmptyTuple
     val gen = Atomiser[C]
@@ -65,9 +59,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
     val hlist: H = 5 *: "hello" *: true *: EmptyTuple
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): C) shouldBe value
-  }
 
-  it should "work for simply nested tuples recursively" in {
+  it should "work for simply nested tuples recursively" in:
     type T = ((Int, Float), String, Boolean)
     type H = (Int *: Float *: EmptyTuple) *: String *: Boolean *: EmptyTuple
     val gen = Atomiser[T]
@@ -76,9 +69,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(tuple): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe tuple
-  }
 
-  it should "work for simply nested case classes recursively" in {
+  it should "work for simply nested case classes recursively" in:
     case class N(i: Int, f: Char)
     case class T(n: N, s: String, b: Boolean)
 
@@ -90,9 +82,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for complex nested tuples recursively" in {
+  it should "work for complex nested tuples recursively" in:
     type T = ((Int, Float), (String, (Boolean, Double)))
     type H = (Int *: Float *: EmptyTuple) *: (String *: (Boolean *: Double *: EmptyTuple) *: EmptyTuple) *: EmptyTuple
     val gen = Atomiser[T]
@@ -101,9 +92,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(tuple): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe tuple
-  }
 
-  it should "work for complex nested case classes recursively" in {
+  it should "work for complex nested case classes recursively" in:
     case class N(i: Int, f: Float)
     case class M(d: Double, n: N)
     case class P(b: Boolean, l: Long)
@@ -117,10 +107,9 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
 
-  it should "work for an hlist inside a tuple inside a cas class" in {
+  it should "work for an hlist inside a tuple inside a cas class" in:
     case class T(t: (Double, String *: EmptyTuple))
 
     type H = (Double *: (String *: EmptyTuple) *: EmptyTuple) *: EmptyTuple
@@ -131,9 +120,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for a simple case class at the head of an HList" in {
+  it should "work for a simple case class at the head of an HList" in:
     case class N(t: String)
 
     type T = N *: Int *: EmptyTuple
@@ -145,9 +133,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for a simple case class at the head of a tuple" in {
+  it should "work for a simple case class at the head of a tuple" in:
     case class N(t: String)
 
     type T = (N, Int)
@@ -159,9 +146,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for a tuple at the head of an hlist at the head of an hlist" in {
+  it should "work for a tuple at the head of an hlist at the head of an hlist" in:
     type T = ((String, Boolean)*: EmptyTuple) *: Int *: EmptyTuple
     type H = ((String *: Boolean *: EmptyTuple) *: EmptyTuple) *: Int *: EmptyTuple
 
@@ -171,9 +157,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for a case class containing only a tuple" in {
+  it should "work for a case class containing only a tuple" in:
 
     case class N(t: (String, Boolean))
     type H = (String *: Boolean *: EmptyTuple) *: EmptyTuple
@@ -184,9 +169,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): N) shouldBe value
-  }
 
-  it should "work for a tuple1 in a case class at the head of a tuple" in {
+  it should "work for a tuple1 in a case class at the head of a tuple" in:
     case class N(t: Tuple1[String])
 
     type T = (N, Int)
@@ -198,9 +182,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for an hlist inside a tuple inside a cas class inside a tuple" in {
+  it should "work for an hlist inside a tuple inside a cas class inside a tuple" in:
     case class N(t: (Double, String *: EmptyTuple))
 
     type T = (N, Int)
@@ -212,9 +195,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for an HList inside a tuple inside a case class inside a tuple inside an HList" in {
+  it should "work for an HList inside a tuple inside a case class inside a tuple inside an HList" in:
     case class N(t: (Double, String *: EmptyTuple))
 
     type T = Boolean *: Long *: (N, Int) *: EmptyTuple
@@ -226,9 +208,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): T) shouldBe value
-  }
 
-  it should "work for a complex mix of nested hlists, case classes and tuples" in {
+  it should "work for a complex mix of nested hlists, case classes and tuples" in:
 
     case class N(t: (Double, String *: EmptyTuple))
     case class C(
@@ -250,18 +231,16 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
 
     (gen.to(value): H) shouldBe hlist
     (gen.from(hlist): C) shouldBe value
-  }
 
-  it should "stop atomising at atoms" in {
+  it should "stop atomising at atoms" in:
     case class Pair(i: Int, s: String)
     case class T(p: Pair, b: Boolean)
     implicit val pairAtom: Atom[Pair] = Atom[Pair]
     val t = T(Pair(5, "hello"), true)
 
     (Atomiser[T].to(t): Pair *: Boolean *: EmptyTuple) shouldBe Pair(5, "hello") *: true *: EmptyTuple
-  }
 
-  it should "stop processing at molecule boundaries" in {
+  it should "stop processing at molecule boundaries" in:
     case class A(b: Boolean, s: String)
     case class B(i: Int, l: List[A])
 
@@ -272,9 +251,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
     val hlist = 5 *: List(A(true, "1"), A(false, "2")) *: EmptyTuple
     (gen.to(value): Output) shouldBe hlist
     (gen.from(hlist): B) shouldBe value
-  }
 
-  it should "work with an atom and a molecule in scope" in {
+  it should "work with an atom and a molecule in scope" in:
     import cats.implicits.catsStdInstancesForVector
     implicit val mol : Molecule[Vector, String] = Molecule[Vector, String]
     implicit val atom: Atom[Vector[String]] = Atom[Vector[String]]
@@ -284,9 +262,8 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
     val gen = Atomiser[A]
 
     (gen.to(A(Vector("hi"))): Vector[String] *: EmptyTuple) shouldBe Vector("hi") *: EmptyTuple
-  }
 
-  it should "atomise simple things correctly" in {
+  it should "atomise simple things correctly" in:
 
     //import macros.Atomic
 
@@ -328,6 +305,4 @@ class AtomiserSpec extends AnyFlatSpec with Matchers {
     Atomiser[F].to(f) shouldBe f
     Atomiser[(E, F)].to(e -> f) shouldBe (e *: f *: EmptyTuple)
 
-  }
 
-}

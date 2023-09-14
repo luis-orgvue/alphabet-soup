@@ -16,7 +16,9 @@ scalacOptions := Seq(
   "-language:higherKinds",
   "-language:implicitConversions",
   "-unchecked",
-  "check-init"
+  "check-init",
+  "-indent",
+  "-rewrite"
 )
 
 ThisBuild / organization := "io.typechecked"

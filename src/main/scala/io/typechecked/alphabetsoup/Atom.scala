@@ -4,7 +4,7 @@ import scala.quoted.{Expr, Quotes, Type}
 
 trait Atom[T]
 
-object Atom {
+object Atom:
 
   def apply[T]: Atom[T] = new Atom[T] {}
 
@@ -16,15 +16,12 @@ object Atom {
   given doubleAtom: Atom[Double] = new Atom[Double] {}
   given longAtom: Atom[Long] = new Atom[Long] {}
 
-  sealed trait DefaultAtom[T] extends Atom[T] {
+  sealed trait DefaultAtom[T] extends Atom[T]:
     def default: T
-  }
 
-  object DefaultAtom {
-    def apply[T](arg: T): DefaultAtom[T] = new DefaultAtom[T] {
+  object DefaultAtom:
+    def apply[T](arg: T): DefaultAtom[T] = new DefaultAtom[T]:
       def default: T = arg
-    }
-  }
 
   given emptyTupleAtom: DefaultAtom[EmptyTuple] = DefaultAtom.apply[EmptyTuple](EmptyTuple)
   given unitAtom: DefaultAtom[Unit] = DefaultAtom.apply[Unit](())
@@ -35,4 +32,3 @@ object Atom {
   def derivedMacro[T: Type](using Quotes): Expr[Atom[T]] =
     '{ new Atom[T]{} }
 
-}
