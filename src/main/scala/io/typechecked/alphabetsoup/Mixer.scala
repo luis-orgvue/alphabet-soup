@@ -63,7 +63,6 @@ object MixerImpl:
   // It does not behave as expected and inference causes issues downstream
   // Reply on boutIsTuple check instead
   given atomiseThenImpl[A, AOut, B, BOut](using
-    ev: A =:!= B,
     atomiserB: Atomiser.Aux[B, BOut],
     boutIsTuple: BOut <:< Tuple,
     atomiserA: Atomiser.Aux[A, AOut],

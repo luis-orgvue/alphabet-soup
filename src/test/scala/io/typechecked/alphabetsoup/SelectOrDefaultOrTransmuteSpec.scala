@@ -107,9 +107,9 @@ class SelectOrDefaultOrTransmuteSpec extends AnyFlatSpec with Matchers:
 
     illTyped("SelectOrDefaultOrTransmute[L, U].apply(l)", ".*No given instance of type io.typechecked.alphabetsoup.SelectOrDefaultOrTransmute.*")
 
-  /*it should "for type not present use first transmutation possible if two are available" in {
-    implicit val transmuteString = Transmute[String, Boolean](_ => true)
-    implicit val transmuteInt = Transmute[Int, Boolean](_ => false)
+  it should "for type not present use first transmutation possible if two are available" in:
+    implicit val transmuteString: Transmute[String, U] = Transmute[String, Boolean](_ => true)
+    implicit val transmuteInt: Transmute[Int, U] = Transmute[Int, Boolean](_ => false)
 
     type L = Int *: String *: EmptyTuple
     type U = Boolean
@@ -117,7 +117,6 @@ class SelectOrDefaultOrTransmuteSpec extends AnyFlatSpec with Matchers:
     val l = 17 *: "twine" *: EmptyTuple
 
     SelectOrDefaultOrTransmute[L, U].apply(l) shouldBe false
-  }*/
 
   it should "for type not present transmute the first available value if multiple in list" in:
     implicit val transmute: Transmute[String, U] = Transmute[String, Int](_.length)

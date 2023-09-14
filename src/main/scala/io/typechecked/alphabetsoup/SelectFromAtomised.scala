@@ -71,7 +71,6 @@ trait LowPrioritySelectFromAtomised extends LowLowPrioritySelectFromAtomised:
   // case where A & B are isomorphic
   given fuzzyHeadSelectMoleculeABIso[M[_], A, T <: Tuple, B](using
     molecule: Molecule[M, B],
-    ev: A =:!= B,
     mixer: => Mixer[A, B],
     mixer2: => Mixer[B, A]
   ): SelectFromAtomised[M[A] *: T, M[B]] =
@@ -98,7 +97,6 @@ trait LowPrioritySelectFromAtomised extends LowLowPrioritySelectFromAtomised:
 trait LowLowPrioritySelectFromAtomised:
   given fuzzyHeadSelectMolecule[M[_], A, T <: Tuple, B](using
     molecule: Molecule[M, B],
-    ev: A =:!= B,
     mixer: Mixer[A, B]
   ): SelectFromAtomised[M[A] *: T, M[B]] =
     new SelectFromAtomised[M[A] *: T, M[B]]:

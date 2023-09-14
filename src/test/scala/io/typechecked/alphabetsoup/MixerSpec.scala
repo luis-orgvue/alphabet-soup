@@ -212,7 +212,23 @@ class MixerSpec extends AnyFlatSpec with Matchers:
 
     Mixer[Resident, PersonAndPostcodeAndAddress].mix(resident) shouldBe expectedResult
 
-  /*it should "demonstrate behaviour without the expected Atoms present" in {
+  it should "demonstrate behaviour without the expected Atoms present" in:
+    case class Age(i: Int)
+    case class FirstName(value: String)
+    case class LastName(value: String)
+    case class Address1(value: String)
+    case class Address2(value: String)
+    case class City(value: String)
+    case class Postcode(value: String)
+    case class Person(firstName: FirstName, lastName: LastName, age: Age)
+    case class Address(a1: Address1, a2: Address2, c: City, p: Postcode)
+    case class Resident(p: Person, a: Address)
+
+    // Tree 2
+    case class FullName(f: FirstName, l: LastName)
+    case class PersonAndPostcode(f: FullName, p: Postcode)
+    case class PersonAndPostcodeAndAddress(pp: PersonAndPostcode, a1: Address1, a2: Address2, c: City)
+
     val resident = Resident(
       Person(
         FirstName("Boaty"),
@@ -242,7 +258,6 @@ class MixerSpec extends AnyFlatSpec with Matchers:
     )
 
     Mixer[Resident, PersonAndPostcodeAndAddress].mix(resident) shouldBe expectedResult
-  }*/
 
   it should "not compile if there is no Atom at all present" in:
     trait TestTrait
