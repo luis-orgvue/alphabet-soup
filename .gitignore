@@ -10,12 +10,15 @@
 .cache
 .history
 .lib/
+.circleci/
 dist/*
 target/
 lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
+project/.bloop/
+project/project/
 _site/
 
 # sublime
